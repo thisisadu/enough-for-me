@@ -1,5 +1,5 @@
 #include <stdio.h>
 
 int main(){
-	reutrn 0;
+	return 0;
 }

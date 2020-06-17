@@ -10,6 +10,16 @@
 (tool-bar-mode   -1)
 (tooltip-mode    -1)
 (menu-bar-mode   -1)
+(global-hl-line-mode t)
+
+(setq make-backup-files nil)
+(global-auto-revert-mode 1)
+(setq auto-save-default nil)
+(fset 'yes-or-no-p 'y-or-n-p)
+
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1))
 
 #+END_SRC
 * evil mode
@@ -48,33 +58,39 @@
 * swiper / Ivy / Counsel
 #+BEGIN_SRC emacs-lisp
 ;; it looks like counsel is a requirement for swiper
-(use-package counsel
-:ensure t
-)
+;;(use-package counsel
+;;:ensure t
+;;)
 
-(use-package swiper
-:ensure try
-:config
-(progn
-(ivy-mode 1)
-(setq ivy-use-virtual-buffers t)
-(global-set-key "\C-s" 'swiper)
-(global-set-key (kbd "C-c C-r") 'ivy-resume)
-(global-set-key (kbd "<f6>") 'ivy-resume)
-;;(global-set-key (kbd "M-x") 'counsel-M-x)
-(global-set-key (kbd "C-x C-f") 'counsel-find-file)
-(global-set-key (kbd "<f1> f") 'counsel-describe-function)
-(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-(global-set-key (kbd "<f1> l") 'counsel-load-library)
-(global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-(global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-(global-set-key (kbd "C-c g") 'counsel-git)
-(global-set-key (kbd "C-c j") 'counsel-git-grep)
-(global-set-key (kbd "C-c k") 'counsel-ag)
-(global-set-key (kbd "C-x l") 'counsel-locate)
-(global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
-(define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
-))
+;;(use-package swiper
+;;:ensure try
+;;:config
+;;(ivy-mode 1)
+;;(setq ivy-use-virtual-buffers t)
+;;)
+#+END_SRC
+* helm
+#+BEGIN_SRC emacs-lisp
+;; Helm
+(use-package helm
+  :ensure t
+  :init
+  (setq helm-M-x-fuzzy-match t
+  helm-mode-fuzzy-match t
+  helm-buffers-fuzzy-matching t
+  helm-recentf-fuzzy-match t
+  helm-locate-fuzzy-match t
+  helm-semantic-fuzzy-match t
+  helm-imenu-fuzzy-match t
+  helm-completion-in-region-fuzzy-match t
+  helm-candidate-number-list 150
+  helm-split-window-in-side-p t
+  helm-move-to-line-cycle-in-source t
+  helm-echo-input-in-header-line t
+  helm-autoresize-max-height 0
+  helm-autoresize-min-height 20)
+  :config
+  (helm-mode 1))
 #+END_SRC
 * Avy
 #+BEGIN_SRC emacs-lisp
@@ -96,4 +112,73 @@
 * Theme
 #+BEGIN_SRC emacs-lisp
 (load-theme 'leuven t)
+;; Theme
+;(use-package doom-themes
+;  :ensure t
+;  :config
+;  (load-theme 'doom-one t))
+#+END_SRC
+* flycheck
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck
+:ensure t
+:init
+(global-flycheck-mode t))
+#+END_SRC
+* yasnippet
+#+BEGIN_SRC emacs-lisp
+(use-package yasnippet
+:ensure t
+:init
+(yas-global-mode 1))
+#+END_SRC
+* small packages
+#+BEGIN_SRC emacs-lisp
+(use-package beacon
+:ensure t
+:config
+(beacon-mode 1)
+; this color looks good for the zenburn theme but not for the one
+; I'm using for the videos
+; (setq beacon-color "#666600")
+)
+; expand the marked region in semantic increments (negative prefix to reduce region)
+(use-package expand-region
+:ensure t
+:config
+(global-set-key (kbd "C-=") 'er/expand-region))
+#+END_SRC
+* Keybinding
+#+BEGIN_SRC emacs-lisp
+;; Custom keybinding
+(use-package general
+  :ensure t
+  :config (general-define-key
+  :states '(normal visual insert emacs)
+  :prefix "SPC"
+  :non-normal-prefix "M-SPC"
+  ;; "/"   '(counsel-rg :which-key "ripgrep") ; You'll need counsel package for this
+  "TAB" '(switch-to-prev-buffer :which-key "previous buffer")
+  "SPC" '(counsel-M-x :which-key "M-x")
+  "ff"  '(counsel-find-file :which-key "find files")
+  ;; Buffers
+  "bb"  '(counsel-ibuffer :which-key "buffers list")
+  "qq"  '(save-buffers-kill-terminal :which-key "save and exit")
+  ;; Help
+  "hv"  '(counsel-describe-variable :which-key "describe variable")
+  "hf"  '(counsel-describe-function :which-key "describe function")
+  "hk"  '(describe-key :which-key "describe key")
+  ;; Window
+  "wl"  '(windmove-right :which-key "move right")
+  "wh"  '(windmove-left :which-key "move left")
+  "wk"  '(windmove-up :which-key "move up")
+  "wj"  '(windmove-down :which-key "move bottom")
+  "w/"  '(split-window-right :which-key "split right")
+  "w-"  '(split-window-below :which-key "split bottom")
+  "wx"  '(delete-window :which-key "delete window")
+  ;; Others
+  "at"  '(ansi-term :which-key "open terminal")
+))
+(global-set-key (kbd "C-j") 'ivy-next-line)
+(global-set-key (kbd "C-k") 'ivy-previous-line)
 #+END_SRC
